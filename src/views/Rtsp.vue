@@ -35,7 +35,6 @@ export default {
   justify-items: center;
 }
 .handleSwitch {
-
   cursor: pointer;
 }
 </style>
