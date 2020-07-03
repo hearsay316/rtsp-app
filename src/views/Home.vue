@@ -3,6 +3,7 @@
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js App" />
     <HelloWorld msg="Welcome to Your Vue.js App" />
+    <HelloWorld msg="Welcome to Your Vue.js App" />
     <div id="dplayer1"></div>
   </div>
 </template>
@@ -12,9 +13,6 @@
 import HelloWorld from "@/components/HelloWorld.vue";
 import axios from "axios";
 import Qs from "qs";
-let log = msg => {
-  document.getElementById("div").innerHTML += msg + "<br>";
-};
 export default {
   name: "Home",
   components: {
@@ -60,7 +58,7 @@ export default {
       };
       // eslint-disable-next-line no-unused-vars
       this.pc.oniceconnectionstatechange = e => {
-        log(this.pc.iceConnectionState);
+        console.log(this.pc.iceConnectionState, e);
         // if(this.pc.iceConnectionState==='disconnected'){
         //   this.getCodecInfo()
         // }
@@ -72,10 +70,6 @@ export default {
       this.getRemoteSdp();
     },
     getCodecInfo() {
-      // const data = Qs.stringify({
-      //   suuid: "demo1",
-      //   data: btoa(this.pc.localDescription.sdp)
-      // });
       axios({
         method: "get",
         url: `http://127.0.0.1:8083/codec/demo1`,
@@ -86,7 +80,7 @@ export default {
         try {
           // data = JSON.parse(data);
           if (data.length > 1) {
-            log("add audio Transceiver");
+            console.log("add audio Transceiver");
             this.pc.addTransceiver("audio", {
               direction: "sendrecv"
             });
@@ -94,7 +88,7 @@ export default {
         } catch (e) {
           console.log(e);
         } finally {
-          log("add video Transceiver");
+          console.log("add video Transceiver");
           this.pc.addTransceiver("video", {
             direction: "sendrecv"
           });
@@ -110,7 +104,7 @@ export default {
             }, 1000);
           };
           this.sendChannel.onmessage = e =>
-            log(
+            console.log(
               `Message from DataChannel '${this.sendChannel.label}' payload '${e.data}'`
             );
         }
