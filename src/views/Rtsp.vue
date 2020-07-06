@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import RtspItem from "./Rtsp-itme.vue";
+import RtspItem from "./Rtsp-item.vue";
 export default {
   name: "Rtsp",
   components: {
@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     handleSwitch() {
-      this.list === 4 ? (this.list = 8) : (this.list = 4);
+      this.list === 4 ? (this.list = 12) : (this.list = 4);
     }
   }
 };
@@ -29,6 +29,7 @@ export default {
 
 <style scoped>
 .rtsp {
+  position: relative;
   display: grid;
   justify-content: center;
   grid-template-columns: 400px 400px;
