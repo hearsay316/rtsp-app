@@ -1,28 +1,60 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-    <div id="dplayer1"></div>
+    <Rtsp :listData="listData" width="800" height="400"></Rtsp>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+// import HelloWorld from "@/components/HelloWorld.vue";
+import Rtsp from "./Rtsp";
 import axios from "axios";
 import Qs from "qs";
 export default {
   name: "Home",
+  data() {
+    return {
+      listData: [
+        {
+          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
+          name: "这个是大桥视频"
+        },
+        {
+          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
+          name: "这个是大桥视频"
+        },
+        {
+          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
+          name: "这个是大桥视频"
+        },
+        {
+          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
+          name: "这个是大桥视频"
+        },
+        {
+          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
+          name: "这个是大桥视频"
+        },
+        {
+          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
+          name: "这个是大桥视频"
+        },
+        {
+          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
+          name: "这个是大桥视频"
+        }
+      ]
+    };
+  },
   components: {
-    HelloWorld
+    // HelloWorld,
+    Rtsp
   },
   async mounted() {
-    await this.$nextTick();
-    this.init();
-    await this.$nextTick();
-    this.getCodecInfo();
+    // await this.$nextTick();
+    // this.init();
+    // await this.$nextTick();
+    // this.getCodecInfo();
   },
   methods: {
     async init() {

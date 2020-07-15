@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="rtsp">
-      <RtspItem v-for="item in list" :key="item"></RtspItem>
+  <div class="main">
+    <div class="rtsp" :style="{width:`${width}px`,height:`${height}px`,gridTemplateColumns:`${width/2}px ${width/2}px`}">
+      <RtspItem v-for="item in listData" :width="`${width/2}`" :height="`${height/2}`" :key="item"></RtspItem>
     </div>
     <div class="handleSwitch" @click="handleSwitch">切换</div>
   </div>
@@ -11,6 +11,19 @@
 import RtspItem from "./Rtsp-item.vue";
 export default {
   name: "Rtsp",
+  props: {
+    listData: {
+      type: Array
+    },
+    width: {
+      type: String,
+      default: '800'
+    },
+    height:{
+      type:String,
+      default: "400"
+    }
+  },
   components: {
     RtspItem
   },
@@ -28,11 +41,13 @@ export default {
 </script>
 
 <style scoped>
+.main {
+  text-align: center;
+}
 .rtsp {
   position: relative;
-  display: grid;
+  display: inline-grid;
   justify-content: center;
-  grid-template-columns: 400px 400px;
   justify-items: center;
 }
 .handleSwitch {

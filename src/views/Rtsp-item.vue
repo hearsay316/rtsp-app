@@ -1,61 +1,78 @@
 <template>
-  <div
-    class="Rtsp-item-video"
-    :class="isFull ? 'Rtsp-item-video-full' : 'Rtsp-item-video'"
-  >
-    <video class="rtsp-item" ref="rtspItem" id="videoElement" muted></video>
+  <div :class="isFull ? 'Rtsp-item-video-full' : 'Rtsp-item-video'">
+    <div class="rtsp-item">
+      <video
+        v-if="!isError"
+        class="rtsp-item"
+        ref="rtspItem"
+        id="videoElement"
+        muted
+      ></video>
+      <div class="rtsp-item-error" v-else>{{ isErrorTitle }}</div>
+    </div>
     <div class="control">
-      <div class="control-main">
+      <div class="control-left">{{ name }}</div>
+      <div class="control-right">
         <div @click="refresh"><span>刷新</span></div>
         <div @click="controlFull">
           <span>{{ isFull ? "还原" : "全屏" }}</span>
         </div>
         <div @click="playClose"><span>关闭</span></div>
-        <!--      <li class="monitor-name">{{ name }}</li>-->
-<!--        <slot name="pushMe" :hasError="hasError" />-->
+        <!--        <slot name="pushMe" :hasError="hasError" />-->
       </div>
-
-      <!--      <li v-if="hasError" title="刷新" @click="refresh">-->
-      <!--        <i class="el-icon-refresh" />-->
-      <!--      </li>-->
-      <!--      <li-->
-      <!--        v-if="!hasError || isFull !== '全屏'"-->
-      <!--        :title="isFull"-->
-      <!--        @click="playFull"-->
-      <!--      >-->
-      <!--        <span :class="isFull == '全屏' ? 'isFull' : 'notFull'" />-->
-      <!--      </li>-->
-      <!--      <li v-if="width !== 600" title="关闭" @click="playClose">-->
-      <!--        <i class="el-icon-circle-close" />-->
-      <!--      </li>-->
     </div>
   </div>
 </template>
 
 <script>
-// import flvjs from "flv.js";
+import flvjs from "flv.js";
 export default {
   name: "Rtsp",
   data() {
     return {
-      isFull: false
+      isFull: false,
+      isError: false,
+      isErrorTitle: "",
+      name: "这个是大桥的视频",
+      loading: false
     };
   },
   props: {
-    Url: {
+    url: {
       type: String
+    },
+    width: {
+      type: String,
+      default: "800"
+    },
+    height: {
+      type: String,
+      default: "400"
+    }
+  },
+  computed: {
+    RtspStyle() {
+      if (this.isFull) {
+        return {}
+      } else {
+      }
     }
   },
   beforeCreate() {
     //isSupported
-    console.log(window.flvjs)
-    if (window.flvjs) this.flvjs = window.flvjs;
+    console.log(window.flvjs);
+    if (window.flvjs || typeof flvjs !== "undefined")
+      this.flvjs = window.flvjs || flvjs;
   },
   mounted() {
-    // this.initData();
+    this.initData();
   },
   methods: {
     initData() {
+      this.loading = true;
+      this.isError = false;
+      this.isErrorTitle = " ";
+      console.log(this.$refs.rtspItem);
       this.flvPlayer = this.flvjs.createPlayer({
         type: "flv",
         cors: "no-cors",
@@ -64,9 +81,43 @@ export default {
         // url: "http://img.ksbbs.com/asset/Mon_1704/15868902d399b87.flv"
         // ↑ 拉流示例地址，stream参数一定要和推流时所设置的流密钥一致
       });
-      this.flvPlayer.attachMediaElement(this.$refs.rtspItem);
-      this.flvPlayer.load();
-      this.flvPlayer.play();
+      console.log(this.flvPlayer.Events, this.flvPlayer);
+      // this.flvPlayer.Events(err => {
+      //   console.log(err, 6666666666666666666);
+      // });
+      this.flvPlayer.on(this.flvjs.Events.ERROR, (errType, errDetail) => {
+        // errType是 NetworkError时，对应errDetail有：Exception、HttpStatusCodeInvalid、ConnectingTimeout、EarlyEof、UnrecoverableEarlyEof
+        // errType是 MediaError时，对应errDetail是MediaMSEError
+        console.log(errType, errDetail, 6666);
+        switch (errType) {
+          case "NetworkError":
+            this.isError = true;
+            this.isErrorTitle = "网络错误";
+            console.log("网络错误");
+            break;
+          case "MediaError":
+            this.isError = true;
+            this.isErrorTitle = "与媒体有关的错误（格式错误，解码问题等）";
+            console.log("与媒体有关的错误（格式错误，解码问题等）");
+            break;
+          case "OtherError":
+            this.isError = true;
+            this.isErrorTitle = "其他错误";
+            console.log("其他错误");
+            break;
+        }
+      });
+      this.flvPlayer.on(this.flvjs.Events.LOADING_COMPLETE, res => {
+        console.log(res);
+        this.loading = false;
+      });
+      try {
+        this.flvPlayer.attachMediaElement(this.$refs.rtspItem);
+        this.flvPlayer.load();
+        this.flvPlayer.play();
+      } catch (e) {
+        console.log(e, 888);
+      }
     },
     flvDestroy() {
       // 关闭
@@ -78,9 +129,14 @@ export default {
     },
     refresh() {
       console.log(666);
-      this.initData();
+      this.isError = false;
+      this.$nextTick(() => {
+        this.initData();
+      });
     },
     playClose() {
+      this.isError = true;
+      this.isErrorTitle = "视频被关闭了";
       this.flvDestroy();
     },
     controlFull() {
@@ -94,13 +150,15 @@ export default {
 .rtsp-item {
   width: 100%;
   height: 100%;
-  border: 1px solid red;
 }
 .Rtsp-item-video {
   width: 400px;
   height: 200px;
   border: 1px solid red;
   position: relative;
+}
+.Rtsp-item-video:nth-child(2n) {
+  border-left: 0;
 }
 video {
   object-fit: fill;
@@ -113,17 +171,30 @@ video {
   height: 28px;
   background: rgba(0, 0, 0, 0.55);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   z-index: 2;
 }
-.control-main {
+.control-left {
+  display: flex;
+  height: 28px;
+  line-height: 28px;
+  width: calc(400px - 150px);
+  padding-left: 6px;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.control-right {
   display: flex;
   width: 150px;
+  height: 28px;
+  line-height: 28px;
   justify-content: space-around;
   color: aliceblue;
 }
-.control-main div {
+.control-right div {
   cursor: pointer;
 }
 .Rtsp-item-video-full {
@@ -133,9 +204,10 @@ video {
   background: red;
   z-index: 3;
 }
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.rtsp-item-error {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

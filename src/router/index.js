@@ -1,14 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import Home from "../views/Home.vue";
+ import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "rtsp",
-    component: import(/* webpackChunkName: "about" */ "../views/Rtsp.vue")
+    name: "home",
+    component: Home
   },
   {
     path: "/about",
