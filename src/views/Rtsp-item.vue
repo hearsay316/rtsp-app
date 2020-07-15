@@ -1,5 +1,5 @@
 <template>
-  <div :class="isFull ? 'Rtsp-item-video-full' : 'Rtsp-item-video'">
+  <div :class="isFull ? 'Rtsp-item-video-full' : 'Rtsp-item-video'" :style="RtspStyle">
     <div class="rtsp-item">
       <video
         v-if="!isError"
@@ -53,8 +53,24 @@ export default {
   computed: {
     RtspStyle() {
       if (this.isFull) {
-        return {}
+        /*
+        *   position: absolute;
+  width: 100%;
+  height: 100%;
+  background: red;
+  z-index: 3;*/
+        return {
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          background: "red",
+          zIndex: "3"
+        };
       } else {
+        return {
+          width: `${this.width}px`,
+          height: `${this.height}px`
+        };
       }
     }
   },
@@ -135,12 +151,16 @@ export default {
       });
     },
     playClose() {
+      this.isFull = false
       this.isError = true;
       this.isErrorTitle = "视频被关闭了";
       this.flvDestroy();
     },
     controlFull() {
-      this.isFull ? (this.isFull = false) : (this.isFull = true);
+      // if(!this.isError){
+        this.isFull ? (this.isFull = false) : (this.isFull = true);
+      // }
+
     }
   }
 };
@@ -152,8 +172,6 @@ export default {
   height: 100%;
 }
 .Rtsp-item-video {
-  width: 400px;
-  height: 200px;
   border: 1px solid red;
   position: relative;
 }
@@ -198,11 +216,6 @@ video {
   cursor: pointer;
 }
 .Rtsp-item-video-full {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: red;
-  z-index: 3;
 }
 .rtsp-item-error {
   height: 100%;

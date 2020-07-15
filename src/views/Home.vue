@@ -30,18 +30,6 @@ export default {
         {
           url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
           name: "这个是大桥视频"
-        },
-        {
-          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
-          name: "这个是大桥视频"
-        },
-        {
-          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
-          name: "这个是大桥视频"
-        },
-        {
-          url: "http://47.103.47.160:8080/live?port=1985&app=live&stream=test",
-          name: "这个是大桥视频"
         }
       ]
     };
